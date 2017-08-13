@@ -1,5 +1,6 @@
 import Game
-class Exit:
+import Noun
+class Exit(Noun.Noun):
     def __init__(self, desc, transistion, dest = None, locked=False, hidden=False):
         self.dest=dest
         self.desc=desc

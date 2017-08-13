@@ -7,6 +7,11 @@ D = 5
 B = 6
 fullNameTable = ["north", "south","east","west","up","down","back"]
 shortNameTable ="nsewudb"
+def dirName(d):
+    if d <=7 and d >=0:
+        return fullNameTable[d]
+    else:
+        return None
 def strToDir(d):
   
     out = shortNameTable.find(d)

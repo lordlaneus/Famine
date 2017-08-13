@@ -63,7 +63,7 @@ def parse(cmd):
             break
     if verbLength >0:
         wordList.append(verb)
-        cmd =cmd[verbLength:]
+        cmd =cmd[verbLength+1:]
         
     #list words
     for word in cmd.split(" "):
