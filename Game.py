@@ -1,23 +1,12 @@
 from Room import *
 from Item import Item
 import Dir
-map = []
 inventory = []
-prompt = "It's A Cold Day In Hell"
-bunker = Room("bunker", "A dusty old bunker")
-surface = Room("surface", "Everything is dead.")
-
-bunker.addExit(Dir.U,"A rusty ladder leads up","You ascend the ladder to the surface.",surface,)
-surface.addExit(Dir.D,"An unremarkable hatch lies beneath you.","You return to your bunker.",bunker) 
-surface.addWall(Dir.U,"The sky is obscured by a thick layer of smog.","Try as you might, you fail to break your earthly tether.") 
-surface.copyExit(Dir.D,Dir.B)
-
-skull = Item("A skull", "The human skull is charred black from the ash.")
-skull.addAliases("skull")
-surface.addItem(skull)
-curRoom = bunker
-
-
+curRoom = None
+prompt = None
+result = -1
+cmd = [""]
+caret = "==>"
 def drop(obj):
     if obj in Game.inventory:
         if obj.getable:
@@ -45,8 +34,7 @@ def findNoun(noun):
 
 def pickup(obj):
 
-    if obj in curRoom.fullInventory():
-        
+    if obj in curRoom.fullInventory():      
         if obj.getable:
             inventory.append(obj)
             curRoom.remove(obj)
@@ -57,6 +45,19 @@ def pickup(obj):
         Game.say ("You already have that.")
     else:
         Game.say("You don't see "+obj.name+".")
+
+def put(obj1, obj2):
+    Game.result = 0
+    if not obj1.getable:
+        Game.say("You can't get rid of that")
+    elif not obj2.locked:
+        Game.result = 1
+        obj2.inventory.append(obj1)
+        Game.inventory.remove(obj1)
+    Game.say(obj2.put(obj1))
+    Game.cmd = ["put",obj1,obj2]
+    print("boba")
+    
 def say(s):
     global prompt
     prompt+=s+"\n"
@@ -75,6 +76,7 @@ def travel(direction):
         curRoom.exits[direction].travel()
     elif curRoom.exits[direction].transistion:
         Game.say(curRoom.exits[direction].transistion)
+        Game.result = 1
     else:
         Game.say("you can't go that way")
 def look(obj):

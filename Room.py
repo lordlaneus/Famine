@@ -23,7 +23,13 @@ class Room:
                 count+=1
         return count
     def fullInventory(self):
-        return self.inventory
+        out = []
+        for item in  self.inventory:
+            out.append(item)
+            if not item.locked:
+                out+=item.fullInventory()
+        return out
+    
     def listExits(self):
         out = ""
         for i in range(6):
@@ -43,14 +49,19 @@ class Room:
             for item in inventory:
                 out+= item.name+", "
         out = out[0:-2]
-        out = " and ".join(out.rsplit(" ",1))
+        out = " and ".join(out.rsplit(", ",1))
         return out
     def remove(self,obj):
-        self.inventory.remove(obj)
+        if obj in self.inventory:
+            self.inventory.remove(obj)
+        else:
+            for item in self.inventory:
+                if obj in item.fullInventory():
+                    item.remove(obj)
     def sayExits(self):
         count = self.countExits()
         if count==0:
-            Game.say("There are no visible exits")
+            Game.say("There are no visible exits.")
         elif count==1:
             Game.say("The only exit is " + self.listExits())
         else:
@@ -59,3 +70,4 @@ class Room:
         Game.say(self.desc)
         Game.say(self.listInventory())
         self.sayExits()
+        Game.result =1
